@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoardPass — Live Airport Flight Boards</title>
+  <meta name="description" content="Live airport flight boards in your pocket. Track departures, arrivals, delays, gates, and terminals for airports worldwide." />
+  <link rel="icon" type="image/png" href="images/boardpass-app-icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0D1117;
+      --bg-secondary: #161B22;
+      --border: #30363D;
+      --text-primary: #E6EDF3;
+      --text-secondary: #C9D1D9;
+      --text-muted: #8B949E;
+      --accent: #F0C040;
+      --accent-dark: #D4A017;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      background: linear-gradient(160deg, #0D1117 0%, #161B22 50%, #0D1117 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 40% 20%, rgba(240,192,64,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-logo {
+      width: min(420px, 80%);
+      height: auto;
+      margin-bottom: 16px;
+    }
+    .hero-tagline {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 36px;
+      line-height: 1.75;
+    }
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: var(--bg-primary);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 14px 36px;
+      border-radius: 30px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ---------- SCREENSHOTS ---------- */
+    .screenshots {
+      background: var(--bg-primary);
+      padding: 48px 24px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screenshots-track {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .screenshot {
+      flex: 0 0 auto;
+      width: 220px;
+      text-align: center;
+    }
+    .screenshot img {
+      width: 100%;
+      height: auto;
+      border-radius: 18px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease;
+    }
+    .screenshot img:hover { transform: scale(1.03); }
+    .screenshot figcaption {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ---------- FEATURES ---------- */
+    .features {
+      background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+      padding: 80px 24px;
+    }
+    .features-inner { max-width: 960px; margin: 0 auto; }
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .card-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+    .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+    .card-desc { font-size: 0.93rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ---------- HOW IT WORKS ---------- */
+    .how {
+      background: var(--bg-primary);
+      padding: 80px 24px;
+    }
+    .how-inner { max-width: 720px; margin: 0 auto; }
+    .steps { display: flex; flex-direction: column; gap: 28px; margin-top: 40px; }
+    .step { display: flex; gap: 20px; align-items: flex-start; }
+    .step-num {
+      flex: 0 0 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: var(--bg-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+    .step-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .step-desc { font-size: 0.93rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ---------- SUPPORT ---------- */
+    .support {
+      background: linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .support-inner { max-width: 560px; margin: 0 auto; }
+    .support-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px;
+      margin-top: 28px;
+    }
+    .support-card p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .email-link {
+      color: var(--accent);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s;
+    }
+    .email-link:hover { border-bottom-color: var(--accent); }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    footer p { font-size: 0.85rem; color: #484F58; }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+      .hero { padding: 50px 20px 40px; }
+      .hero-logo { width: min(300px, 85%); }
+      .section-title { font-size: 1.6rem; }
+      .screenshots-track { justify-content: flex-start; padding: 0 8px; }
+      .screenshot { width: 170px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .step { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <img src="images/boardpass-logo-wide.svg" alt="BoardPass" class="hero-logo" />
+      <p class="hero-tagline">Your gate. Your flights. Your board.</p>
+      <p class="hero-desc">
+        Live airport flight boards in your pocket. Track departures, arrivals,
+        delays, gates, and terminals for airports worldwide — with offline
+        support for when you need it most.
+      </p>
+      <!-- Replace with App Store link once approved -->
+      <span class="badge">Coming Soon to the App Store</span>
+      <!--
+      <a href="https://apps.apple.com/app/boardpass/idXXXXXXXXXX">
+        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+             alt="Download on the App Store" style="height:54px;" />
+      </a>
+      -->
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <section class="screenshots">
+    <div class="screenshots-track">
+      <figure class="screenshot">
+        <img src="images/boardpass-home.png" alt="BoardPass home screen" />
+        <figcaption>Search any airport</figcaption>
+      </figure>
+      <figure class="screenshot">
+        <img src="images/boardpass-departures.png" alt="Live departures board" />
+        <figcaption>Live departure boards</figcaption>
+      </figure>
+      <figure class="screenshot">
+        <img src="images/boardpass-arrivals.png" alt="Arrivals with delay tracking" />
+        <figcaption>Track every delay</figcaption>
+      </figure>
+      <figure class="screenshot">
+        <img src="images/boardpass-settings.png" alt="Settings and customization" />
+        <figcaption>Make it yours</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="features-inner">
+      <h2 class="section-title">Everything You Need at the Gate</h2>
+      <p class="section-sub">Real-time flight information, beautifully designed for travelers</p>
+      <div class="features-grid">
+        <div class="card">
+          <span class="card-icon">&#9992;&#65039;</span>
+          <h3 class="card-title">Real-Time Flight Boards</h3>
+          <p class="card-desc">View live departures and arrivals for any airport. See flight numbers, airlines, destinations, times, and status — all updating in real time.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">&#9201;</span>
+          <h3 class="card-title">Delay Tracking</h3>
+          <p class="card-desc">Instantly see which flights are delayed, by how much, and the revised time. Color-coded statuses make scanning easy.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">&#9733;</span>
+          <h3 class="card-title">Watchlist</h3>
+          <p class="card-desc">Track the flights that matter to you. Add up to 3 flights on the free plan and keep tabs from one convenient screen.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">&#128205;</span>
+          <h3 class="card-title">Nearby Airports</h3>
+          <p class="card-desc">Automatically detects your closest airport using location services. Pull up the board with a single tap.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">&#128268;</span>
+          <h3 class="card-title">Works Offline</h3>
+          <p class="card-desc">Flight data is cached locally so you can view boards even without connectivity — perfect for airport dead zones.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">&#127761;</span>
+          <h3 class="card-title">Dark Mode</h3>
+          <p class="card-desc">Beautiful dark theme for red-eye flights and dim terminals. Plus adjustable text sizes and 12/24-hour time format.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how">
+    <div class="how-inner">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Three steps to your flight board</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3 class="step-title">Search or tap Nearby</h3>
+            <p class="step-desc">Find any airport by city name, airport name, or IATA code. Or let BoardPass detect your nearest airport automatically.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3 class="step-title">View the board</h3>
+            <p class="step-desc">See live departures and arrivals. Sort by time, flight, city, or status. Filter to find exactly the flight you need.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3 class="step-title">Track your flight</h3>
+            <p class="step-desc">Tap any flight for gate, terminal, and baggage details. Add it to your watchlist to keep tracking it from anywhere in the app.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="support" id="support">
+    <div class="support-inner">
+      <h2 class="section-title">Support</h2>
+      <p class="section-sub">We're here to help</p>
+      <div class="support-card">
+        <p>Having trouble with BoardPass? Found a bug? Have a feature request? We'd love to hear from you.</p>
+        <p>Reach out and we'll get back to you as quickly as possible.</p>
+        <a href="mailto:production@photojerry.com" class="email-link">production@photojerry.com</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 JSP Media LLC. All rights reserved.</p>
+    <p style="margin-top:8px;"><a href="privacy-policy.html">Privacy Policy</a></p>
+  </footer>
+
+</body>
+</html>
